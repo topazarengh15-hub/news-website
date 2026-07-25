@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useUser } from "@/lib/UserContext";
 
 interface Category {
   id: number;
@@ -12,6 +13,7 @@ interface Category {
 }
 
 export default function CategoriesPage() {
+  const { user, loading: userLoading } = useUser();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -121,6 +123,15 @@ export default function CategoriesPage() {
       setDeleting(null);
     }
   };
+
+  if (!userLoading && user?.role !== "ADMIN") {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-12 text-center">
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p className="text-gray-500">Only administrators can manage categories.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

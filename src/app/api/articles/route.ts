@@ -20,8 +20,14 @@ export async function GET(request: NextRequest) {
 
     if (status) {
       where.status = status;
+    } else if (user?.role === "AUTHOR") {
+      where.authorId = user.id;
     } else if (!isAdminOrEditor) {
       where.status = "PUBLISHED";
+    }
+
+    if (user?.role === "AUTHOR") {
+      where.authorId = user.id;
     }
 
     if (category) {

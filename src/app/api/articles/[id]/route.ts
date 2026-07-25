@@ -65,7 +65,7 @@ export async function PUT(
     }
 
     if (user.role === "EDITOR") {
-      if (existing.authorId !== user.id && status === undefined) {
+      if (existing.authorId !== user.id) {
         return NextResponse.json({ error: "Editors can only edit their own articles" }, { status: 403 });
       }
     }
@@ -94,7 +94,7 @@ export async function PUT(
     }
 
     let authorId = existing.authorId;
-    if (authorName) {
+    if (user.role === "ADMIN" && authorName) {
       let author = await prisma.user.findFirst({ where: { name: authorName } });
       if (!author) {
         author = await prisma.user.create({
@@ -104,13 +104,11 @@ export async function PUT(
       authorId = author.id;
     }
 
-    let articleStatus = status || existing.status;
-    if (user.role === "EDITOR") {
+    let articleStatus = existing.status;
+    if (user.role === "ADMIN") {
+      articleStatus = status || existing.status;
+    } else if (user.role === "EDITOR" || user.role === "AUTHOR") {
       if (status && status !== existing.status) {
-        articleStatus = "PENDING_REVIEW";
-      }
-    } else if (user.role === "AUTHOR") {
-      if (status === "PUBLISHED") {
         articleStatus = "PENDING_REVIEW";
       }
     }
