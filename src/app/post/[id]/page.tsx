@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import ShareButtons from "@/components/ShareButtons";
 
 export const dynamic = "force-dynamic";
 
@@ -150,6 +151,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   </div>
                 </div>
               </div>
+
+              <ShareButtons title={article.title} />
             </div>
           </div>
         </article>
