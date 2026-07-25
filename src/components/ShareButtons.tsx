@@ -1,20 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 interface ShareButtonsProps {
   title: string;
 }
 
 export default function ShareButtons({ title }: ShareButtonsProps) {
-  const [url, setUrl] = useState("");
-
-  useEffect(() => {
-    setUrl(window.location.href);
-  }, []);
-
-  if (!url) return null;
-
+  const pathname = usePathname();
+  const url = `https://topaz4-news-website.vercel.app${pathname}`;
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
 
