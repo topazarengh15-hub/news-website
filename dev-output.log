@@ -35,3 +35,4 @@ See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode de
  GET /api/articles?limit=50 200 in 24ms (next.js: 8ms, application-code: 16ms)
  GET /api/articles?limit=50 200 in 1640ms (next.js: 14ms, application-code: 1626ms)
 ✓ Compiled in 2.2s
+✓ Compiled in 113ms
