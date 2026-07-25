@@ -101,6 +101,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                 )}
               </div>
 
+              <ShareButtons title={article.title} />
+
               <div className="mt-8 prose prose-lg max-w-none text-gray-700">
                 {article.excerpt && (
                   <p className="text-lg leading-relaxed">{article.excerpt}</p>
@@ -151,8 +153,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   </div>
                 </div>
               </div>
-
-              <ShareButtons title={article.title} />
             </div>
           </div>
         </article>
