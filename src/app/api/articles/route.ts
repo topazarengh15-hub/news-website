@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export async function GET(request: NextRequest) {
   try {
@@ -105,8 +107,10 @@ export async function POST(request: NextRequest) {
     if (!resolvedAuthorId && authorName) {
       let author = await prisma.user.findFirst({ where: { name: authorName } });
       if (!author) {
+        const tempPassword = crypto.randomBytes(16).toString("hex");
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
         author = await prisma.user.create({
-          data: { name: authorName, email: `${authorName.toLowerCase().replace(/\s+/g, ".")}@news.com`, password: "pending", role: "EDITOR" },
+          data: { name: authorName, email: `${authorName.toLowerCase().replace(/\s+/g, ".")}@news.com`, password: hashedPassword, role: "EDITOR" },
         });
       }
       resolvedAuthorId = author.id;

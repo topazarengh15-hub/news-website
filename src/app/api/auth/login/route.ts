@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { signCookie } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
 
-    response.cookies.set("admin-token", JSON.stringify({ userId: user.id, role: user.role }), {
+    response.cookies.set("admin-token", signCookie({ userId: user.id, role: user.role }), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

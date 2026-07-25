@@ -29,12 +29,12 @@ export default function LoginPage() {
         return;
       }
 
-      if (data.user.role !== "ADMIN" && data.user.role !== "EDITOR") {
-        setError("You don't have admin access");
-        return;
+      const role = data.user.role;
+      if (role === "ADMIN" || role === "EDITOR") {
+        router.push("/admin");
+      } else {
+        router.push("/admin/articles");
       }
-
-      router.push("/admin");
     } catch {
       setError("Something went wrong");
     } finally {
@@ -99,7 +99,11 @@ export default function LoginPage() {
 
           <div className="mt-6 p-4 bg-gray-50 rounded-md">
             <p className="text-xs text-gray-500 text-center">
-              Demo: admin@news.com / admin123
+              Admin: admin@news.com / admin123
+              <br />
+              Editor: editor@news.com / editor123
+              <br />
+              Author: author@news.com / author123
             </p>
           </div>
         </div>
