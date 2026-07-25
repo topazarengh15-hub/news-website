@@ -65,3 +65,72 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create user" }, { status: 500 });
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const user = getCurrentUser(request);
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { id, role, name } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (role) {
+      if (!["ADMIN", "EDITOR", "AUTHOR"].includes(role)) {
+        return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+      }
+      updateData.role = role;
+    }
+    if (name) {
+      updateData.name = name;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No changes provided" }, { status: 400 });
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: Number(id) },
+      data: updateData,
+      select: { id: true, name: true, email: true, role: true, createdAt: true },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error("Failed to update user:", error);
+    return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const user = getCurrentUser(request);
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+    }
+
+    if (Number(id) === user.id) {
+      return NextResponse.json({ error: "Cannot delete yourself" }, { status: 400 });
+    }
+
+    await prisma.user.delete({ where: { id: Number(id) } });
+
+    return NextResponse.json({ message: "User deleted" });
+  } catch (error) {
+    console.error("Failed to delete user:", error);
+    return NextResponse.json({ error: "Failed to delete user" }, { status: 500 });
+  }
+}

@@ -20,6 +20,8 @@ export default function UsersPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "AUTHOR" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editRole, setEditRole] = useState("");
 
   const fetchUsers = async (signal?: AbortSignal) => {
     setLoading(true);
@@ -63,6 +65,37 @@ export default function UsersPage() {
       setError("Failed to create user");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleRoleChange = async (userId: number, newRole: string) => {
+    try {
+      const res = await fetch("/api/users", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId, role: newRole }),
+      });
+      if (res.ok) {
+        setUsers(users.map((u) => u.id === userId ? { ...u, role: newRole } : u));
+        setEditingId(null);
+      }
+    } catch {
+      alert("Failed to update role");
+    }
+  };
+
+  const handleDelete = async (userId: number, name: string) => {
+    if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/api/users?id=${userId}`, { method: "DELETE" });
+      if (res.ok) {
+        setUsers(users.filter((u) => u.id !== userId));
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to delete user");
+      }
+    } catch {
+      alert("Failed to delete user");
     }
   };
 
@@ -144,8 +177,8 @@ export default function UsersPage() {
                   onChange={(e) => setForm({ ...form, role: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 >
-                  <option value="AUTHOR">Author - Can write & submit own articles</option>
-                  <option value="EDITOR">Editor - Can write & submit articles</option>
+                  <option value="AUTHOR">Author - Write & submit own articles</option>
+                  <option value="EDITOR">Editor - Write & submit articles</option>
                   <option value="ADMIN">Admin - Full control</option>
                 </select>
               </div>
@@ -176,32 +209,79 @@ export default function UsersPage() {
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Articles</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Joined</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {users.map((u) => (
-                <tr key={u.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{u.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{u.email}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${roleColors[u.role] || "bg-gray-100 text-gray-700"}`}>
-                      {u.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{u._count?.articles || 0}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{new Date(u.createdAt).toLocaleDateString()}</td>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Articles</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Joined</th>
+                  <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y">
+                {users.map((u) => (
+                  <tr key={u.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{u.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{u.email}</td>
+                    <td className="px-6 py-4">
+                      {editingId === u.id ? (
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={editRole}
+                            onChange={(e) => setEditRole(e.target.value)}
+                            className="px-2 py-1 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
+                          >
+                            <option value="ADMIN">Admin</option>
+                            <option value="EDITOR">Editor</option>
+                            <option value="AUTHOR">Author</option>
+                          </select>
+                          <button
+                            onClick={() => handleRoleChange(u.id, editRole)}
+                            className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingId(null)}
+                            className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${roleColors[u.role] || "bg-gray-100 text-gray-700"}`}>
+                          {u.role}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{u._count?.articles || 0}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{new Date(u.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-right">
+                      {editingId !== u.id && u.id !== user?.id && (
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => { setEditingId(u.id); setEditRole(u.role); }}
+                            className="px-3 py-1 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                          >
+                            Edit Role
+                          </button>
+                          <button
+                            onClick={() => handleDelete(u.id, u.name)}
+                            className="px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
