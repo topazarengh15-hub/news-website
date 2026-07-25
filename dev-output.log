@@ -1,0 +1,20 @@
+▲ Next.js 16.2.11 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.172.20.188:3000
+- Environments: .env
+✓ Ready in 1313ms
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+ GET /admin/articles 200 in 2.0s (next.js: 772ms, proxy.ts: 281ms, application-code: 979ms)
+(node:30312) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ GET /api/auth/me 200 in 1820ms (next.js: 303ms, application-code: 1517ms)
+ GET /api/articles?limit=50 200 in 107ms (next.js: 63ms, application-code: 45ms)
+ GET /api/articles?limit=50 200 in 1471ms (next.js: 7ms, application-code: 1464ms)
