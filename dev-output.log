@@ -18,3 +18,19 @@ See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode de
  GET /api/auth/me 200 in 1820ms (next.js: 303ms, application-code: 1517ms)
  GET /api/articles?limit=50 200 in 107ms (next.js: 63ms, application-code: 45ms)
  GET /api/articles?limit=50 200 in 1471ms (next.js: 7ms, application-code: 1464ms)
+ GET / 200 in 3.2s (next.js: 134ms, application-code: 3.1s)
+ GET /api/auth/me 200 in 1643ms (next.js: 94ms, application-code: 1550ms)
+ GET /api/articles?limit=50 200 in 1208ms (next.js: 24ms, application-code: 1183ms)
+[browser] Image with src "/uploads/1784892693581-5okenp.jpeg" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://picsum.photos/seed/climate1/600/400" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://picsum.photos/seed/senate1/600/400" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://picsum.photos/seed/software1/600/400" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /placeholder.svg 200 in 2.8s (next.js: 2.3s, application-code: 556ms)
+[browser] Image with src "/uploads/1784892693581-5okenp.jpeg" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://picsum.photos/seed/climate1/600/400" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://picsum.photos/seed/senate1/600/400" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://picsum.photos/seed/software1/600/400" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /placeholder.svg 200 in 1724ms (next.js: 406ms, application-code: 1319ms)
+ GET /api/auth/me 200 in 3.1s (next.js: 31ms, application-code: 3.1s)
+ GET /api/articles?limit=50 200 in 24ms (next.js: 8ms, application-code: 16ms)
+ GET /api/articles?limit=50 200 in 1640ms (next.js: 14ms, application-code: 1626ms)
