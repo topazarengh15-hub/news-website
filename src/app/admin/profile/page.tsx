@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUploader from "@/components/ImageUploader";
 
 interface UserProfile {
   id: number;
   name: string;
   email: string;
   role: string;
+  image: string;
   createdAt: string;
 }
 
@@ -15,7 +17,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [form, setForm] = useState({ name: "", email: "", currentPassword: "", newPassword: "", confirmPassword: "" });
+  const [form, setForm] = useState({ name: "", email: "", currentPassword: "", newPassword: "", confirmPassword: "", image: "" });
 
   useEffect(() => {
     async function fetchProfile() {
@@ -24,7 +26,7 @@ export default function ProfilePage() {
         if (res.ok) {
           const data = await res.json();
           setProfile(data);
-          setForm({ name: data.name, email: data.email, currentPassword: "", newPassword: "", confirmPassword: "" });
+          setForm({ name: data.name, email: data.email, currentPassword: "", newPassword: "", confirmPassword: "", image: data.image || "" });
         }
       } catch {
         console.error("Failed to fetch profile");
@@ -54,6 +56,7 @@ export default function ProfilePage() {
       const body: Record<string, string> = {};
       if (form.name !== profile?.name) body.name = form.name;
       if (form.email !== profile?.email) body.email = form.email;
+      if (form.image !== (profile?.image || "")) body.image = form.image;
       if (form.newPassword) {
         body.currentPassword = form.currentPassword;
         body.newPassword = form.newPassword;
@@ -77,7 +80,7 @@ export default function ProfilePage() {
       }
 
       setProfile(data);
-      setForm({ name: data.name, email: data.email, currentPassword: "", newPassword: "", confirmPassword: "" });
+      setForm({ name: data.name, email: data.email, currentPassword: "", newPassword: "", confirmPassword: "", image: data.image || "" });
       setMessage({ type: "success", text: "Profile updated successfully" });
     } catch {
       setMessage({ type: "error", text: "Failed to update profile" });
@@ -107,9 +110,13 @@ export default function ProfilePage() {
       {profile && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center gap-4 mb-6 pb-6 border-b">
-            <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-600">
-              {profile.name.charAt(0).toUpperCase()}
-            </div>
+            {profile.image ? (
+              <img src={profile.image} alt={profile.name} className="w-16 h-16 rounded-full object-cover" />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-600">
+                {profile.name.charAt(0).toUpperCase()}
+              </div>
+            )}
             <div>
               <h3 className="text-lg font-semibold text-gray-900">{profile.name}</h3>
               <p className="text-sm text-gray-500">{profile.email}</p>
@@ -126,6 +133,14 @@ export default function ProfilePage() {
           )}
 
           <form onSubmit={handleUpdate} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
+              <ImageUploader
+                value={form.image}
+                onChange={(url) => setForm({ ...form, image: url })}
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
               <input

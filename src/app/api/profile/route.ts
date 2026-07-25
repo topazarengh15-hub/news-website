@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: { id: authUser.id },
-    select: { id: true, name: true, email: true, role: true, createdAt: true },
+    select: { id: true, name: true, email: true, role: true, image: true, createdAt: true },
   });
 
   if (!user) {
@@ -28,7 +28,7 @@ export async function PUT(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { email, currentPassword, newPassword, name } = body;
+  const { email, currentPassword, newPassword, name, image } = body;
 
   const user = await prisma.user.findUnique({ where: { id: authUser.id } });
   if (!user) {
@@ -39,6 +39,10 @@ export async function PUT(request: NextRequest) {
 
   if (name && name !== user.name) {
     updateData.name = name;
+  }
+
+  if (image !== undefined) {
+    updateData.image = image;
   }
 
   if (email && email !== user.email) {
@@ -67,7 +71,7 @@ export async function PUT(request: NextRequest) {
   const updated = await prisma.user.update({
     where: { id: authUser.id },
     data: updateData,
-    select: { id: true, name: true, email: true, role: true, createdAt: true },
+    select: { id: true, name: true, email: true, role: true, image: true, createdAt: true },
   });
 
   return NextResponse.json(updated);

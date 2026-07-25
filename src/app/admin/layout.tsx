@@ -101,9 +101,18 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800">
           {user && (
-            <div className="px-4 py-2 mb-2">
-              <p className="text-sm text-white font-medium">{user.name}</p>
-              <p className="text-xs text-gray-400">{user.role}</p>
+            <div className="flex items-center gap-3 px-4 py-2 mb-2">
+              {user.image ? (
+                <img src={user.image} alt={user.name} className="w-9 h-9 rounded-full object-cover" />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-red-600 flex items-center justify-center text-white text-sm font-bold">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <p className="text-sm text-white font-medium">{user.name}</p>
+                <p className="text-xs text-gray-400">{user.role}</p>
+              </div>
             </div>
           )}
           <Link

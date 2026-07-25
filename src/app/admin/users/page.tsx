@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@/lib/UserContext";
+import ImageUploader from "@/components/ImageUploader";
 
 interface UserItem {
   id: number;
   name: string;
   email: string;
   role: string;
+  image: string;
   createdAt: string;
   _count?: { articles: number };
 }
@@ -17,7 +19,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "AUTHOR" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "AUTHOR", image: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -59,7 +61,7 @@ export default function UsersPage() {
         return;
       }
       setUsers([data, ...users]);
-      setForm({ name: "", email: "", password: "", role: "AUTHOR" });
+      setForm({ name: "", email: "", password: "", role: "AUTHOR", image: "" });
       setShowForm(false);
     } catch {
       setError("Failed to create user");
@@ -183,6 +185,13 @@ export default function UsersPage() {
                 </select>
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
+              <ImageUploader
+                value={form.image}
+                onChange={(url) => setForm({ ...form, image: url })}
+              />
+            </div>
             <div className="flex items-center gap-3">
               <button
                 type="submit"
@@ -213,6 +222,7 @@ export default function UsersPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Photo</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Role</th>
@@ -224,6 +234,15 @@ export default function UsersPage() {
               <tbody className="divide-y">
                 {users.map((u) => (
                   <tr key={u.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      {u.image ? (
+                        <img src={u.image} alt={u.name} className="w-10 h-10 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-500">
+                          {u.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{u.name}</td>
                     <td className="px-6 py-4 text-sm text-gray-500">{u.email}</td>
                     <td className="px-6 py-4">

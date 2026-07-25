@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, excerpt, content, imageUrl, videoUrl, source, categoryId, subcategoryId, authorName, authorId, status, featured, editorsPick, trending } = body;
+    const { title, excerpt, content, imageUrl, videoUrl, source, categoryId, subcategoryId, authorName, authorImage, authorId, status, featured, editorsPick, trending } = body;
 
     if (!title || !content || !categoryId) {
       return NextResponse.json(
@@ -147,6 +147,7 @@ export async function POST(request: NextRequest) {
         categoryId,
         subcategoryId: subcategoryId || null,
         authorId: resolvedAuthorId,
+        authorImage: authorImage || "",
         featured: user.role === "ADMIN" ? (featured || false) : false,
         editorsPick: user.role === "ADMIN" ? (editorsPick || false) : false,
         trending: user.role === "ADMIN" ? (trending || false) : false,

@@ -19,6 +19,7 @@ interface ArticleData {
   content: string;
   excerpt: string;
   imageUrl: string;
+  authorImage: string;
   status: string;
   featured: boolean;
   editorsPick: boolean;
@@ -46,6 +47,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     excerpt: "",
     imageUrl: "",
     authorName: "",
+    authorImage: "",
     categoryId: "",
     subcategoryId: "",
     status: "DRAFT",
@@ -80,6 +82,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           excerpt: article.excerpt || "",
           imageUrl: article.imageUrl || "",
           authorName: article.author.name,
+          authorImage: article.authorImage || "",
           categoryId: String(article.category.id),
           subcategoryId: article.subcategory ? String(article.subcategory.id) : "",
           status: article.status,
@@ -371,6 +374,13 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${errors.authorName ? "border-red-500" : "border-gray-300"}`}
             />
             {errors.authorName && <p className="text-red-500 text-xs mt-1">{errors.authorName}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Author Photo</label>
+            <ImageUploader
+              value={form.authorImage}
+              onChange={(url) => setForm((prev) => ({ ...prev, authorImage: url }))}
+            />
           </div>
         </div>
 

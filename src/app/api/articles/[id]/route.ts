@@ -51,7 +51,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { title, excerpt, content, imageUrl, videoUrl, source, categoryId, subcategoryId, authorName, status, featured, editorsPick, trending } = body;
+    const { title, excerpt, content, imageUrl, videoUrl, source, categoryId, subcategoryId, authorName, authorImage, status, featured, editorsPick, trending } = body;
 
     const existing = await prisma.article.findUnique({
       where: { id: parseInt(id) },
@@ -125,6 +125,7 @@ export async function PUT(
         ...(categoryId && { categoryId }),
         ...(subcategoryId !== undefined && { subcategoryId: subcategoryId || null }),
         ...(authorId && { authorId }),
+        ...(authorImage !== undefined && { authorImage }),
         status: articleStatus,
         ...(user.role === "ADMIN" && featured !== undefined && { featured }),
         ...(user.role === "ADMIN" && editorsPick !== undefined && { editorsPick }),

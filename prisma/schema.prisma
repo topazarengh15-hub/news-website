@@ -13,6 +13,7 @@ model User {
   email     String   @unique
   password  String
   role      String   @default("AUTHOR") // ADMIN, EDITOR, AUTHOR
+  image     String   @default("")
   createdAt DateTime @default(now())
   articles  Article[]
   comments  Comment[]
@@ -48,6 +49,7 @@ model Article {
   subcategory   Category? @relation("SubcategoryArticles", fields: [subcategoryId], references: [id])
   authorId      Int
   author        User      @relation(fields: [authorId], references: [id])
+  authorImage   String    @default("")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   comments      Comment[]

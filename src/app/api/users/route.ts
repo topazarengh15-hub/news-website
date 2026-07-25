@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
         name: true,
         email: true,
         role: true,
+        image: true,
         createdAt: true,
         _count: { select: { articles: true } },
       },
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, email, password, role } = body;
+    const { name, email, password, role, image } = body;
 
     if (!name || !email || !password || !role) {
       return NextResponse.json({ error: "Name, email, password, and role are required" }, { status: 400 });
@@ -55,8 +56,8 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
-      data: { name, email, password: hashedPassword, role },
-      select: { id: true, name: true, email: true, role: true, createdAt: true },
+      data: { name, email, password: hashedPassword, role, image: image || "" },
+      select: { id: true, name: true, email: true, role: true, image: true, createdAt: true },
     });
 
     return NextResponse.json(newUser, { status: 201 });
@@ -74,7 +75,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, role, name } = body;
+    const { id, role, name, image } = body;
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -90,6 +91,9 @@ export async function PUT(request: NextRequest) {
     if (name) {
       updateData.name = name;
     }
+    if (image !== undefined) {
+      updateData.image = image;
+    }
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json({ error: "No changes provided" }, { status: 400 });
@@ -98,7 +102,7 @@ export async function PUT(request: NextRequest) {
     const updated = await prisma.user.update({
       where: { id: Number(id) },
       data: updateData,
-      select: { id: true, name: true, email: true, role: true, createdAt: true },
+      select: { id: true, name: true, email: true, role: true, image: true, createdAt: true },
     });
 
     return NextResponse.json(updated);

@@ -26,7 +26,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     include: {
       category: true,
       subcategory: true,
-      author: { select: { name: true } },
+      author: { select: { name: true, image: true } },
     },
   });
 
@@ -50,6 +50,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const categorySlug = article.category.slug;
   const categoryName = article.category.name;
   const authorName = article.author.name;
+  const authorImage = article.authorImage || article.author.image || "";
   const dateStr = article.createdAt.toISOString().split("T")[0];
 
   return (
@@ -137,9 +138,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
               <div className="mt-8 p-6 bg-gray-50 rounded-lg">
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                    {authorName.split(" ").map(n => n[0]).join("")}
-                  </div>
+                  {authorImage ? (
+                    <img src={authorImage} alt={authorName} className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      {authorName.split(" ").map(n => n[0]).join("")}
+                    </div>
+                  )}
                   <div className="ml-4">
                     <p className="font-semibold text-gray-900">{authorName}</p>
                   </div>
