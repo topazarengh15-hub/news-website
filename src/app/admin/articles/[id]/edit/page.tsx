@@ -185,6 +185,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
 
   useEffect(() => {
     if (submitted) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
       const timer = setTimeout(() => router.push("/admin/articles"), 3000);
       return () => clearTimeout(timer);
     }
