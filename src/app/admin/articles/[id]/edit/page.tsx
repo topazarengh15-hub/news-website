@@ -39,6 +39,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -170,13 +171,24 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
         return;
       }
 
-      router.push("/admin/articles");
+      if (overrideStatus === "PENDING_REVIEW") {
+        setSubmitted(true);
+      } else {
+        router.push("/admin/articles");
+      }
     } catch {
       setErrors({ submit: "Failed to update article" });
     } finally {
       setSaving(false);
     }
   };
+
+  useEffect(() => {
+    if (submitted) {
+      const timer = setTimeout(() => router.push("/admin/articles"), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [submitted, router]);
 
   if (loading) {
     return (
@@ -207,6 +219,13 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Article</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {submitted && (
+          <div className="bg-green-50 border border-green-200 rounded-lg px-5 py-4 text-center">
+            <p className="text-green-800 font-semibold text-lg">Article submitted for review!</p>
+            <p className="text-green-700 text-sm mt-1">An admin will review and publish it shortly. Redirecting...</p>
+          </div>
+        )}
+
         {errors.submit && (
           <div className="bg-red-50 text-red-600 px-4 py-3 rounded-md text-sm">{errors.submit}</div>
         )}
@@ -388,14 +407,14 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
 
         <div className="flex items-center gap-4">
           {user?.role === "ADMIN" ? (
-            <button type="submit" disabled={saving} className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50">
+            <button type="submit" disabled={saving || submitted} className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50">
               {saving ? "Saving..." : "Save Changes"}
             </button>
           ) : (
             <>
               <button
                 type="button"
-                disabled={saving}
+                disabled={saving || submitted}
                 onClick={(e) => handleSubmit(e, "PENDING_REVIEW")}
                 className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
               >
@@ -403,7 +422,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
               </button>
               <button
                 type="button"
-                disabled={saving}
+                disabled={saving || submitted}
                 onClick={(e) => handleSubmit(e, "DRAFT")}
                 className="px-6 py-3 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
               >
@@ -411,7 +430,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
               </button>
             </>
           )}
-          <button type="button" onClick={() => router.back()} className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300">
+          <button type="button" onClick={() => router.back()} disabled={submitted} className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 disabled:opacity-50">
             Cancel
           </button>
         </div>
