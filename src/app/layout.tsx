@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BreakingNewsTicker from "@/components/BreakingNewsTicker";
+import PublicLayout from "@/components/PublicLayout";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,10 +35,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <Header />
-        <BreakingNewsTicker />
-        <main id="main-content" className="flex-1">{children}</main>
-        <Footer />
+        <PublicLayout>{children}</PublicLayout>
       </body>
     </html>
   );
