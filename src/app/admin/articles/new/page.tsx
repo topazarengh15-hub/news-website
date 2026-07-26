@@ -25,10 +25,7 @@ export default function NewArticlePage() {
         { value: "PUBLISHED", label: "Published" },
         { value: "ARCHIVED", label: "Archived" },
       ]
-    : [
-        { value: "DRAFT", label: "Draft" },
-        { value: "PENDING_REVIEW", label: "Submit for Review" },
-      ];
+    : [];
 
   const [form, setForm] = useState({
     title: "",
@@ -101,7 +98,7 @@ export default function NewArticlePage() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, overrideStatus?: string) => {
     e.preventDefault();
     if (!validate()) return;
     setSaving(true);
@@ -111,6 +108,7 @@ export default function NewArticlePage() {
         ...form,
         categoryId: Number(form.categoryId),
         subcategoryId: form.subcategoryId ? Number(form.subcategoryId) : null,
+        status: overrideStatus || form.status,
       };
 
       const res = await fetch("/api/articles", {
@@ -272,21 +270,23 @@ export default function NewArticlePage() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-            >
-              {statusOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {user?.role === "ADMIN" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              >
+                {statusOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {user?.role === "ADMIN" && (
             <div className="flex items-center gap-6">
@@ -346,17 +346,38 @@ export default function NewArticlePage() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            type="submit"
-            disabled={saving}
-            className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
-          >
-            {saving ? "Creating..." : "Create Article"}
-          </button>
+          {user?.role === "ADMIN" ? (
+            <button
+              type="submit"
+              disabled={saving}
+              className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+            >
+              {saving ? "Creating..." : "Create Article"}
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={(e) => handleSubmit(e, "PENDING_REVIEW")}
+                className="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
+                {saving ? "Publishing..." : "Publish"}
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={(e) => handleSubmit(e, "DRAFT")}
+                className="px-6 py-3 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-colors disabled:opacity-50"
+              >
+                {saving ? "Saving..." : "Save as Draft"}
+              </button>
+            </>
+          )}
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300"
           >
             Cancel
           </button>
