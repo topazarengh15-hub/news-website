@@ -165,9 +165,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         </article>
 
         <aside className="space-y-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Related Articles</h2>
-            <div className="space-y-4">
+          <div className="bg-white rounded-lg shadow-md">
+            <div className="bg-gray-900 rounded-t-lg p-4">
+              <h2 className="text-lg font-bold text-white">Related Articles</h2>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
               {relatedArticles.map((related) => (
                 <Link
                   key={related.id}
@@ -196,6 +199,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                 </Link>
               ))}
             </div>
+          </div>
           </div>
 
           <Link href="/subscribe" className="block bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
