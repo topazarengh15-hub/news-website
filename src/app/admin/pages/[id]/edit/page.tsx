@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import RichEditor from "@/components/RichEditor";
 
 export default function EditPage() {
   const router = useRouter();
@@ -92,13 +93,7 @@ export default function EditPage() {
             </label>
             <span className="text-xs text-gray-500">JPEG, PNG, WebP, GIF up to 5MB</span>
           </div>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={20}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm"
-          />
-          <p className="text-xs text-gray-500 mt-1">HTML supported. Images are appended at the end of content.</p>
+          <RichEditor value={content} onChange={setContent} />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
