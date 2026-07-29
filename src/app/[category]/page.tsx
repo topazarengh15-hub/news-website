@@ -5,8 +5,6 @@ import { prisma } from "@/lib/prisma";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import type { DisplayArticle } from "@/lib/types";
 
-export const revalidate = 300;
-
 export async function generateStaticParams() {
   return categories.map((c) => ({ category: c.slug }));
 }

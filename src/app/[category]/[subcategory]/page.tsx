@@ -5,8 +5,6 @@ import { formatName, navigationItems } from "@/lib/constants";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import type { DisplayArticle } from "@/lib/types";
 
-export const revalidate = 300;
-
 export async function generateStaticParams() {
   return navigationItems.flatMap((item) =>
     item.submenu.map((sub) => ({
