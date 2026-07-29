@@ -159,7 +159,7 @@ export default async function Home() {
         <div className="lg:col-span-2">
           <EditorsPick items={editorsPicks} />
         </div>
-        <div>
+        <div className="bg-white rounded-lg shadow-md">
           <MostRead items={mostRead} />
         </div>
       </div>

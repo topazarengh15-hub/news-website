@@ -10,10 +10,10 @@ export default function MostRead({ items }: MostReadProps) {
 
   return (
     <section>
-      <div className="bg-gray-900 rounded-lg p-4">
+      <div className="bg-gray-900 rounded-t-lg p-4">
         <h2 className="text-2xl font-bold text-white">Most Read</h2>
       </div>
-      <div className="bg-white rounded-lg shadow-md p-6 mt-0">
+      <div className="p-6">
         <div className="space-y-4">
           {items.map((article, index) => (
             <Link
