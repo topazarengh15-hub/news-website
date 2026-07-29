@@ -164,7 +164,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
           </div>
         </article>
 
-        <aside className="space-y-6 lg:mt-12">
+        <aside className="space-y-6 lg:mt-11">
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Related Articles</h2>
             <div className="space-y-4">
