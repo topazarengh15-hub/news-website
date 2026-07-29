@@ -32,18 +32,15 @@ export async function GET(request: NextRequest) {
       where.authorId = user.id;
     }
 
-    if (category) {
-      const cat = await prisma.category.findUnique({ where: { slug: category } });
-      if (cat) {
-        where.categoryId = cat.id;
-      }
-    }
-
     if (subcategory) {
       const sub = await prisma.category.findUnique({ where: { slug: subcategory } });
       if (sub) {
-        where.subcategoryId = sub.id;
-        delete where.categoryId;
+        where.categoryId = sub.id;
+      }
+    } else if (category) {
+      const cat = await prisma.category.findUnique({ where: { slug: category } });
+      if (cat) {
+        where.category = { parentId: cat.id };
       }
     }
 
@@ -60,7 +57,6 @@ export async function GET(request: NextRequest) {
         where,
         include: {
           category: true,
-          subcategory: true,
           author: { select: { id: true, name: true, email: true } },
         },
         orderBy: { createdAt: "desc" },
@@ -93,7 +89,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, excerpt, content, imageUrl, videoUrl, source, categoryId, subcategoryId, authorName, authorImage, authorId, status, featured, editorsPick, trending } = body;
+    const { title, excerpt, content, imageUrl, videoUrl, source, categoryId, authorName, authorImage, authorId, status, featured, editorsPick, trending } = body;
 
     if (!title || !content || !categoryId) {
       return NextResponse.json(
@@ -149,7 +145,6 @@ export async function POST(request: NextRequest) {
         source: source || "",
         status: articleStatus,
         categoryId,
-        subcategoryId: subcategoryId || null,
         authorId: resolvedAuthorId,
         authorImage: authorImage || "",
         featured: user.role === "ADMIN" ? (featured || false) : false,
@@ -158,7 +153,6 @@ export async function POST(request: NextRequest) {
       },
       include: {
         category: true,
-        subcategory: true,
         author: { select: { id: true, name: true, email: true } },
       },
     });

@@ -36,8 +36,8 @@ export default function NewArticlePage() {
     imageUrl: "",
     authorName: "News Desk",
     authorImage: "",
+    parentCategoryId: "",
     categoryId: "",
-    subcategoryId: "",
     status: "DRAFT",
     featured: false,
     editorsPick: false,
@@ -53,7 +53,7 @@ export default function NewArticlePage() {
       .catch(console.error);
   }, []);
 
-  const selectedCategory = categories.find((c) => c.id === Number(form.categoryId));
+  const selectedCategory = categories.find((c) => c.id === Number(form.parentCategoryId));
   const subcategories = selectedCategory?.children || [];
 
   const autoSlug = (title: string) =>
@@ -73,8 +73,8 @@ export default function NewArticlePage() {
       if (name === "title" && !prev.slug) {
         updated.slug = autoSlug(value);
       }
-      if (name === "categoryId") {
-        updated.subcategoryId = "";
+      if (name === "parentCategoryId") {
+        updated.categoryId = "";
       }
       return updated;
     });
@@ -93,7 +93,7 @@ export default function NewArticlePage() {
     if (!form.title.trim()) errs.title = "Title is required";
     if (!form.slug.trim()) errs.slug = "Slug is required";
     if (!form.content.trim()) errs.content = "Content is required";
-    if (!form.categoryId) errs.categoryId = "Category is required";
+    if (!form.categoryId) errs.categoryId = "Subcategory is required";
     if (!form.authorName.trim()) errs.authorName = "Author is required";
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -108,7 +108,6 @@ export default function NewArticlePage() {
       const body = {
         ...form,
         categoryId: Number(form.categoryId),
-        subcategoryId: form.subcategoryId ? Number(form.subcategoryId) : null,
         status: overrideStatus || form.status,
       };
 
@@ -141,7 +140,7 @@ export default function NewArticlePage() {
   useEffect(() => {
     if (submitted) {
       window.scrollTo({ top: 0, behavior: "smooth" });
-      const timer = setTimeout(() => router.push("/admin/articles"), 30000);
+      const timer = setTimeout(() => router.push("/admin/articles"), 15000);
       return () => clearTimeout(timer);
     }
   }, [submitted, router]);
@@ -254,39 +253,39 @@ export default function NewArticlePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Parent Category *</label>
               <select
-                name="categoryId"
-                value={form.categoryId}
+                name="parentCategoryId"
+                value={form.parentCategoryId}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${errors.categoryId ? "border-red-500" : "border-gray-300"}`}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
               >
-                <option value="">Select category</option>
+                <option value="">Select parent category</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
                   </option>
                 ))}
               </select>
-              {errors.categoryId && <p className="text-red-500 text-xs mt-1">{errors.categoryId}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory *</label>
               <select
-                name="subcategoryId"
-                value={form.subcategoryId}
+                name="categoryId"
+                value={form.categoryId}
                 onChange={handleChange}
-                disabled={!form.categoryId}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:opacity-50"
+                disabled={!form.parentCategoryId}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:opacity-50 ${errors.categoryId ? "border-red-500" : "border-gray-300"}`}
               >
-                <option value="">None</option>
+                <option value="">Select subcategory</option>
                 {subcategories.map((sub) => (
                   <option key={sub.id} value={sub.id}>
                     {sub.name}
                   </option>
                 ))}
               </select>
+              {errors.categoryId && <p className="text-red-500 text-xs mt-1">{errors.categoryId}</p>}
             </div>
           </div>
 

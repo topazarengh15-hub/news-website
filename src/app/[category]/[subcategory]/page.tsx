@@ -1,10 +1,19 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { formatName } from "@/lib/constants";
+import { formatName, navigationItems } from "@/lib/constants";
 import ArticleCard from "@/components/ArticleCard";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  return navigationItems.flatMap((item) =>
+    item.submenu.map((sub) => ({
+      category: item.href.replace("/", ""),
+      subcategory: sub.href.split("/").pop()!,
+    }))
+  );
+}
 
 export async function generateMetadata({
   params,
@@ -36,10 +45,9 @@ export default async function SubcategoryPage({
   if (!subCategory) return notFound();
 
   const dbArticles = await prisma.article.findMany({
-    where: { subcategoryId: subCategory.id, status: "PUBLISHED" },
+    where: { categoryId: subCategory.id, status: "PUBLISHED" },
     include: {
-      category: true,
-      subcategory: true,
+      category: { include: { parent: true } },
       author: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -49,8 +57,7 @@ export default async function SubcategoryPage({
     excerpt: string;
     imageUrl: string;
     createdAt: Date;
-    category: { name: string };
-    subcategory: { name: string } | null;
+    category: { name: string; parent: { name: string } | null };
     author: { name: string };
   }[];
 
@@ -58,8 +65,8 @@ export default async function SubcategoryPage({
     id: a.id,
     title: a.title,
     excerpt: a.excerpt,
-    category: a.category.name,
-    subcategory: a.subcategory?.name || "",
+    category: a.category.parent?.name || a.category.name,
+    subcategory: a.category.name,
     author: a.author.name,
     date: a.createdAt.toISOString().split("T")[0],
     imageUrl: a.imageUrl || "/placeholder.svg",

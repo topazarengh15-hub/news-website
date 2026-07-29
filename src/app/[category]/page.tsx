@@ -4,7 +4,11 @@ import { categories } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import ArticleCard from "@/components/ArticleCard";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  return categories.map((c) => ({ category: c.slug }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
@@ -29,22 +33,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
     excerpt: string;
     imageUrl: string;
     createdAt: Date;
-    category: { name: string };
-    subcategory: { name: string } | null;
+    category: { name: string; parent: { name: string } | null };
     author: { name: string };
   }[] = [];
   if (dbCategory) {
     dbArticles = await prisma.article.findMany({
       where: {
-        OR: [
-          { categoryId: dbCategory.id },
-          { subcategory: { parentId: dbCategory.id } },
-        ],
+        category: { parentId: dbCategory.id },
         status: "PUBLISHED",
       },
       include: {
-        category: true,
-        subcategory: true,
+        category: { include: { parent: true } },
         author: { select: { name: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -55,8 +54,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
     id: a.id,
     title: a.title,
     excerpt: a.excerpt,
-    category: a.category.name,
-    subcategory: a.subcategory?.name || "",
+    category: a.category.parent?.name || a.category.name,
+    subcategory: a.category.name,
     author: a.author.name,
     date: a.createdAt.toISOString().split("T")[0],
     imageUrl: a.imageUrl || "/placeholder.svg",

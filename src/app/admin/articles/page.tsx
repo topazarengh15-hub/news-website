@@ -12,7 +12,6 @@ interface Article {
   createdAt: string;
   author: { name: string };
   category: { name: string };
-  subcategory?: { name: string } | null;
 }
 
 export default function ArticlesPage() {
@@ -170,9 +169,6 @@ export default function ArticlesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm text-gray-700">{article.category.name}</span>
-                      {article.subcategory && (
-                        <span className="text-xs text-gray-400 block">/ {article.subcategory.name}</span>
-                      )}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">{article.author.name}</td>
                     <td className="px-6 py-4">

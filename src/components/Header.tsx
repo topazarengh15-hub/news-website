@@ -144,6 +144,12 @@ export default function Header() {
               >
                 {item.submenu.length > 0 ? (
                   <>
+                    <Link
+                      href={item.href}
+                      className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
                     <button
                       onClick={() => setActiveMenu(activeMenu === item.label ? null : item.label)}
                       onKeyDown={(e) => {
@@ -153,13 +159,12 @@ export default function Header() {
                           setActiveMenu(activeMenu === item.label ? null : item.label);
                         }
                       }}
-                      className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 transition-colors inline-flex items-center"
+                      className="px-1 py-2 text-gray-700 hover:text-red-600 transition-colors inline-flex items-center"
                       aria-haspopup="true"
                       aria-expanded={activeMenu === item.label}
                     >
-                      {item.label}
                       <svg
-                        className={`inline-block ml-1 w-4 h-4 transition-transform ${activeMenu === item.label ? "rotate-180" : ""}`}
+                        className={`w-4 h-4 transition-transform ${activeMenu === item.label ? "rotate-180" : ""}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -176,9 +181,14 @@ export default function Header() {
                         onMouseLeave={handleMenuLeave}
                       >
                         <div className="px-4 mb-2">
-                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            {item.label}
-                          </p>
+                          <Link
+                            href={item.href}
+                            className="text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-red-600"
+                            role="menuitem"
+                            onClick={() => setActiveMenu(null)}
+                          >
+                            View All {item.label}
+                          </Link>
                         </div>
                         <div className="grid grid-cols-1 gap-1">
                           {item.submenu.map((subItem) => (

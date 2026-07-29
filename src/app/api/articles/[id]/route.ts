@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { revalidateArticle } from "@/lib/revalidate";
 
 export async function GET(
   request: NextRequest,
@@ -11,8 +12,7 @@ export async function GET(
     const article = await prisma.article.findUnique({
       where: { id: parseInt(id) },
       include: {
-        category: true,
-        subcategory: true,
+        category: { include: { parent: true } },
         author: { select: { id: true, name: true, email: true } },
         comments: {
           where: { status: "APPROVED" },
@@ -51,10 +51,11 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { title, excerpt, content, imageUrl, videoUrl, source, categoryId, subcategoryId, authorName, authorImage, status, featured, editorsPick, trending } = body;
+    const { title, excerpt, content, imageUrl, videoUrl, source, categoryId, authorName, authorImage, status, featured, editorsPick, trending } = body;
 
     const existing = await prisma.article.findUnique({
       where: { id: parseInt(id) },
+      include: { category: true },
     });
 
     if (!existing) {
@@ -113,6 +114,8 @@ export async function PUT(
       }
     }
 
+    const oldCategorySlug = existing.category?.slug;
+
     const article = await prisma.article.update({
       where: { id: parseInt(id) },
       data: {
@@ -123,7 +126,6 @@ export async function PUT(
         ...(videoUrl !== undefined && { videoUrl }),
         ...(source !== undefined && { source }),
         ...(categoryId && { categoryId }),
-        ...(subcategoryId !== undefined && { subcategoryId: subcategoryId || null }),
         ...(authorId && { authorId }),
         ...(authorImage !== undefined && { authorImage }),
         status: articleStatus,
@@ -133,10 +135,16 @@ export async function PUT(
       },
       include: {
         category: true,
-        subcategory: true,
         author: { select: { id: true, name: true, email: true } },
       },
     });
+
+    if (article.status === "PUBLISHED") {
+      revalidateArticle(article.id, article.category?.slug);
+      if (oldCategorySlug && oldCategorySlug !== article.category?.slug) {
+        revalidateArticle(article.id, oldCategorySlug);
+      }
+    }
 
     return NextResponse.json(article);
   } catch (error) {
@@ -162,6 +170,7 @@ export async function DELETE(
 
     const existing = await prisma.article.findUnique({
       where: { id: parseInt(id) },
+      include: { category: true },
     });
 
     if (!existing) {
@@ -174,6 +183,8 @@ export async function DELETE(
     await prisma.article.delete({
       where: { id: parseInt(id) },
     });
+
+    revalidateArticle(parseInt(id), existing.category?.slug);
 
     return NextResponse.json({ message: "Article deleted successfully" });
   } catch (error) {

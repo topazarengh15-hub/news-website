@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { revalidateArticle } from "@/lib/revalidate";
 
 export async function POST(
   request: NextRequest,
@@ -27,10 +28,11 @@ export async function POST(
       data: { status: "PUBLISHED" },
       include: {
         category: true,
-        subcategory: true,
         author: { select: { id: true, name: true, email: true } },
       },
     });
+
+    revalidateArticle(article.id, article.category?.slug);
 
     return NextResponse.json(article);
   } catch (error) {

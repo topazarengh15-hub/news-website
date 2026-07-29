@@ -4,7 +4,15 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import ShareButtons from "@/components/ShareButtons";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const articles = await prisma.article.findMany({
+    where: { status: "PUBLISHED" },
+    select: { id: true },
+  });
+  return articles.map((a) => ({ id: String(a.id) }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,8 +33,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const article = await prisma.article.findUnique({
     where: { id: Number(id) },
     include: {
-      category: true,
-      subcategory: true,
+      category: { include: { parent: true } },
       author: { select: { name: true, image: true } },
     },
   });
@@ -35,21 +42,20 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
   const relatedArticles = await prisma.article.findMany({
     where: {
-      categoryId: article.categoryId,
+      category: { parentId: article.category.parentId },
       id: { not: article.id },
       status: "PUBLISHED",
     },
     include: {
-      category: true,
-      subcategory: true,
+      category: { include: { parent: true } },
       author: { select: { name: true } },
     },
     take: 3,
     orderBy: { createdAt: "desc" },
   });
 
-  const categorySlug = article.category.slug;
-  const categoryName = article.category.name;
+  const categorySlug = article.category.parent?.slug || article.category.slug;
+  const categoryName = article.category.parent?.name || article.category.name;
   const authorName = article.author.name;
   const authorImage = article.authorImage || article.author.image || "";
   const dateStr = article.createdAt.toISOString().split("T")[0];
@@ -129,11 +135,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                   <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
                     {categoryName}
                   </span>
-                  {article.subcategory && (
+                  {article.category.parent && (
                     <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                      {article.subcategory.name}
+                      {article.category.parent.name}
                     </span>
                   )}
+                  <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                    {article.category.name}
+                  </span>
                 </div>
               </div>
 
