@@ -16,16 +16,15 @@ function toDisplayArticle(a: {
   excerpt: string;
   imageUrl: string;
   createdAt: Date;
-  category: { name: string };
-  subcategory: { name: string } | null;
+  category: { name: string; parent: { name: string } | null };
   author: { name: string };
 }): DisplayArticle {
   return {
     id: a.id,
     title: a.title,
     excerpt: a.excerpt,
-    category: a.category.name,
-    subcategory: a.subcategory?.name || "",
+    category: a.category.parent?.name || a.category.name,
+    subcategory: a.category.name,
     author: a.author.name,
     date: a.createdAt.toISOString().split("T")[0],
     imageUrl: a.imageUrl || "/placeholder.svg",
@@ -33,8 +32,7 @@ function toDisplayArticle(a: {
 }
 
 const includeRelations = {
-  category: true,
-  subcategory: true,
+  category: { include: { parent: true } },
   author: { select: { name: true } },
 };
 
@@ -90,7 +88,7 @@ export default async function Home() {
     prisma.article.findMany({
       where: {
         status: "PUBLISHED",
-        subcategory: { slug: "opinion" },
+        category: { slug: "opinion" },
       },
       include: includeRelations,
       orderBy: { createdAt: "desc" },
