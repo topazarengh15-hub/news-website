@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { formatName, navigationItems } from "@/lib/constants";
 import ArticleCard from "@/components/ArticleCard";
 
-export const revalidate = 60;
 
 export async function generateStaticParams() {
   return navigationItems.flatMap((item) =>

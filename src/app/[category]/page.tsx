@@ -4,7 +4,6 @@ import { categories } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import ArticleCard from "@/components/ArticleCard";
 
-export const revalidate = 60;
 
 export async function generateStaticParams() {
   return categories.map((c) => ({ category: c.slug }));
