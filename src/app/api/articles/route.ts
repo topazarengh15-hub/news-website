@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       prisma.article.findMany({
         where,
         include: {
-          category: true,
+          category: { include: { parent: true } },
           author: { select: { id: true, name: true, email: true } },
         },
         orderBy: { createdAt: "desc" },

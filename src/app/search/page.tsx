@@ -28,15 +28,14 @@ function SearchContent() {
           excerpt: string;
           imageUrl: string;
           createdAt: string;
-          category: { name: string };
-          subcategory?: { name: string } | null;
+          category: { name: string; parent: { name: string } | null };
           author: { name: string };
         }) => ({
           id: a.id,
           title: a.title,
           excerpt: a.excerpt,
-          category: a.category.name,
-          subcategory: a.subcategory?.name || "",
+          category: a.category.parent?.name || a.category.name,
+          subcategory: a.category.name,
           author: a.author.name,
           date: a.createdAt.split("T")[0],
           imageUrl: a.imageUrl || "/placeholder.svg",
