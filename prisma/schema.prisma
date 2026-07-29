@@ -17,6 +17,7 @@ model User {
   createdAt DateTime @default(now())
   articles  Article[]
   comments  Comment[]
+  pages     Page[]
 }
 
 model Category {
@@ -68,7 +69,9 @@ model Page {
   title     String
   slug      String   @unique
   content   String
-  status    String   @default("PUBLISHED") // DRAFT, PUBLISHED
+  status    String   @default("PUBLISHED") // DRAFT, PENDING_REVIEW, PUBLISHED
+  authorId  Int?
+  author    User?    @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
