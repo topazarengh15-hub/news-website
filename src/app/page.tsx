@@ -5,7 +5,6 @@ import EditorsPick from "@/components/EditorsPick";
 import MostRead from "@/components/MostRead";
 import VideoSection from "@/components/VideoSection";
 import OpinionSection from "@/components/OpinionSection";
-import CategorySection from "@/components/CategorySection";
 import { prisma } from "@/lib/prisma";
 import type { DisplayArticle } from "@/lib/types";
 
@@ -46,10 +45,6 @@ export default async function Home() {
     mostCommentedArticles,
     videoArticles,
     opinionArticles,
-    worldArticles,
-    techArticles,
-    sportsArticles,
-    businessArticles,
   ] = await Promise.all([
     prisma.article.findMany({
       where: { status: "PUBLISHED", featured: true },
@@ -99,42 +94,6 @@ export default async function Home() {
       orderBy: { createdAt: "desc" },
       take: 3,
     }),
-    prisma.article.findMany({
-      where: {
-        status: "PUBLISHED",
-        category: { parent: { slug: "world" } },
-      },
-      include: includeRelations,
-      orderBy: { createdAt: "desc" },
-      take: 3,
-    }),
-    prisma.article.findMany({
-      where: {
-        status: "PUBLISHED",
-        category: { parent: { slug: "tech" } },
-      },
-      include: includeRelations,
-      orderBy: { createdAt: "desc" },
-      take: 3,
-    }),
-    prisma.article.findMany({
-      where: {
-        status: "PUBLISHED",
-        category: { parent: { slug: "sports" } },
-      },
-      include: includeRelations,
-      orderBy: { createdAt: "desc" },
-      take: 3,
-    }),
-    prisma.article.findMany({
-      where: {
-        status: "PUBLISHED",
-        category: { parent: { slug: "business" } },
-      },
-      include: includeRelations,
-      orderBy: { createdAt: "desc" },
-      take: 3,
-    }),
   ]);
 
   const heroSlides = featuredArticles.length > 0
@@ -158,11 +117,6 @@ export default async function Home() {
   const opinions = opinionArticles.length > 0
     ? opinionArticles.map(toDisplayArticle)
     : latestArticles.slice(2, 5).map(toDisplayArticle);
-
-  const world = worldArticles.map(toDisplayArticle);
-  const tech = techArticles.map(toDisplayArticle);
-  const sports = sportsArticles.map(toDisplayArticle);
-  const business = businessArticles.map(toDisplayArticle);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -199,11 +153,7 @@ export default async function Home() {
         </aside>
       </div>
 
-      <CategorySection title="World News" slug="world" articles={world} />
-
       <LatestNewsCarousel items={latest} />
-
-      <CategorySection title="Technology" slug="tech" articles={tech} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12 items-start">
         <div className="lg:col-span-2">
@@ -214,11 +164,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <CategorySection title="Sports" slug="sports" articles={sports} />
-
       <VideoSection items={videos} />
-
-      <CategorySection title="Business" slug="business" articles={business} />
 
       <OpinionSection items={opinions} />
     </div>
