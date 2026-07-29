@@ -11,6 +11,21 @@ export default function NewPage() {
   const [content, setContent] = useState("");
   const [status, setStatus] = useState("PUBLISHED");
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    if (res.ok) {
+      const { imageUrl } = await res.json();
+      setContent((prev) => prev + `<img src="${imageUrl}" alt="" />\n`);
+    }
+    setUploading(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,13 +73,20 @@ export default function NewPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+          <div className="flex items-center gap-2 mb-2">
+            <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-md text-sm font-medium transition-colors">
+              {uploading ? "Uploading..." : "Insert Image"}
+              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
+            </label>
+            <span className="text-xs text-gray-500">JPEG, PNG, WebP, GIF up to 5MB</span>
+          </div>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={20}
             className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm"
           />
-          <p className="text-xs text-gray-500 mt-1">HTML supported</p>
+          <p className="text-xs text-gray-500 mt-1">HTML supported. Images are appended at the end of content.</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
