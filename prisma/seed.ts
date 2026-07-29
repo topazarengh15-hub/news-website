@@ -350,6 +350,58 @@ async function main() {
     console.log(`Created article: ${article.title}`);
   }
 
+  const pages = [
+    {
+      title: "About Us",
+      slug: "about",
+      content: `<h2>Our Mission</h2><p>NEWS is dedicated to delivering accurate, timely, and comprehensive news coverage from around the world. Our mission is to inform and empower our readers with quality journalism that matters.</p><h2>Our Story</h2><p>Founded in 2026, NEWS has quickly grown to become a trusted source for breaking news, in-depth analysis, and human interest stories. Our team of experienced journalists and editors work around the clock to bring you the news that shapes our world.</p><h2>Our Values</h2><ul><li>Accuracy and truth in reporting</li><li>Independence and editorial integrity</li><li>Transparency in our processes</li><li>Respect for our readers and sources</li><li>Innovation in storytelling</li></ul><h2>Our Team</h2><p>Our diverse team of journalists, editors, and media professionals brings decades of combined experience in covering global events, politics, technology, business, sports, and entertainment.</p>`,
+    },
+    {
+      title: "Careers",
+      slug: "careers",
+      content: `<h2>Why Work at NEWS?</h2><p>At NEWS, we believe in the power of journalism to inform and inspire. Join a team that values integrity, creativity, and impact. We offer competitive salaries, comprehensive benefits, and the opportunity to be part of something meaningful.</p><h2>Open Positions</h2><h3>Senior Political Correspondent</h3><p>Washington, D.C. &middot; Full-time</p><p>Cover breaking political news and policy developments for our growing audience.</p><h3>Technology Reporter</h3><p>San Francisco, CA &middot; Full-time</p><p>Report on the latest in tech, AI, and digital innovation.</p><h3>Sports Editor</h3><p>New York, NY &middot; Full-time</p><p>Lead our sports coverage and manage a team of writers.</p><h3>Video Producer</h3><p>Remote &middot; Full-time</p><p>Create compelling video content for our digital platforms.</p><h3>Social Media Manager</h3><p>Remote &middot; Full-time</p><p>Manage our social media presence and audience engagement.</p>`,
+    },
+    {
+      title: "Contact Us",
+      slug: "contact",
+      content: `<p>We would love to hear from you. Reach out to us using the information below.</p><h2>Contact Info</h2><p><strong>Address:</strong> 123 News Street, New York, NY 10001</p><p><strong>Email:</strong> contact@news.com</p><p><strong>Phone:</strong> (555) 123-4567</p><h2>Office Hours</h2><p>Monday - Friday: 9:00 AM - 6:00 PM</p><p>Saturday: 10:00 AM - 4:00 PM</p><p>Sunday: Closed</p>`,
+    },
+    {
+      title: "Advertise With Us",
+      slug: "advertise",
+      content: `<h2>Why Advertise With NEWS?</h2><p>NEWS reaches millions of engaged readers daily. Our audience trusts us for accurate, timely news, making your brand message more impactful. We offer various advertising solutions to meet your marketing goals.</p><h3>Display Advertising</h3><p>Banner ads, native ads, and rich media placements across our website and apps.</p><h3>Sponsored Content</h3><p>Native advertising that blends seamlessly with our editorial content.</p><h3>Newsletter Sponsorship</h3><p>Reach our email subscribers with targeted newsletter placements.</p><h3>Video Advertising</h3><p>Pre-roll, mid-roll, and companion banner ads on our video content.</p><p>Ready to advertise with us? Contact us at advertise@news.com.</p>`,
+    },
+    {
+      title: "Terms of Service",
+      slug: "terms",
+      content: `<p><em>Last updated: July 23, 2026</em></p><h2>1. Acceptance of Terms</h2><p>By accessing and using NEWS, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p><h2>2. Use of Services</h2><p>You may use our services for lawful purposes only. You agree not to use our services in any way that violates any applicable law or regulation.</p><h2>3. Content</h2><p>All content published on NEWS is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works without our express written permission.</p><h2>4. User Accounts</h2><p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p><h2>5. Limitation of Liability</h2><p>NEWS shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of our services.</p><h2>6. Changes to Terms</h2><p>We reserve the right to modify these terms at any time. We will notify you of any changes by posting the new terms on this page.</p><h2>7. Contact Us</h2><p>If you have any questions about these Terms, please contact us at terms@news.com.</p>`,
+    },
+    {
+      title: "Privacy Policy",
+      slug: "privacy",
+      content: `<p><em>Last updated: July 23, 2026</em></p><h2>1. Information We Collect</h2><p>We collect information you provide directly to us, such as when you create an account, subscribe to our newsletter, or contact us. This may include your name, email address, and any other information you choose to provide.</p><h2>2. How We Use Your Information</h2><p>We use the information we collect to provide, maintain, and improve our services, to send you news and updates, and to communicate with you about our services.</p><h2>3. Information Sharing</h2><p>We do not sell or rent your personal information to third parties. We may share your information only in the following circumstances: with your consent, to comply with legal obligations, or to protect our rights.</p><h2>4. Data Security</h2><p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p><h2>5. Your Rights</h2><p>You have the right to access, correct, or delete your personal information. You may also opt out of receiving promotional communications from us at any time.</p><h2>6. Contact Us</h2><p>If you have any questions about this Privacy Policy, please contact us at privacy@news.com.</p>`,
+    },
+    {
+      title: "Cookie Policy",
+      slug: "cookies",
+      content: `<p><em>Last updated: July 23, 2026</em></p><h2>What Are Cookies</h2><p>Cookies are small text files that are placed on your computer or mobile device when you visit a website. They are widely used to make websites work more efficiently and to provide information to website owners.</p><h2>How We Use Cookies</h2><p>We use cookies for the following purposes:</p><ul><li>To remember your preferences and settings</li><li>To analyze how our website is used</li><li>To personalize content and advertisements</li><li>To provide social media features</li></ul><h2>Types of Cookies We Use</h2><h3>Essential Cookies</h3><p>These cookies are necessary for the website to function properly. They enable core functionality such as security, network management, and account access.</p><h3>Analytics Cookies</h3><p>These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.</p><h3>Marketing Cookies</h3><p>These cookies are used to track visitors across websites to display relevant advertisements.</p><h2>Managing Cookies</h2><p>You can control and/or delete cookies as you wish. You can delete all cookies that are already on your computer and you can set most browsers to prevent them from being placed.</p><h2>Contact Us</h2><p>If you have any questions about our Cookie Policy, please contact us at privacy@news.com.</p>`,
+    },
+  ];
+
+  for (const page of pages) {
+    await prisma.page.upsert({
+      where: { slug: page.slug },
+      update: { content: page.content },
+      create: {
+        title: page.title,
+        slug: page.slug,
+        content: page.content,
+        status: "PUBLISHED",
+      },
+    });
+    console.log(`Created page: ${page.title}`);
+  }
+
   console.log("Seeding complete!");
 }
 

@@ -10,18 +10,18 @@ const footerLinks = {
     {
       title: "Company",
       links: [
-        { label: "About Us", href: "/about" },
-        { label: "Careers", href: "/careers" },
-        { label: "Contact", href: "/contact" },
-        { label: "Advertise", href: "/advertise" },
+        { label: "About Us", href: "/page/about" },
+        { label: "Careers", href: "/page/careers" },
+        { label: "Contact", href: "/page/contact" },
+        { label: "Advertise", href: "/page/advertise" },
       ],
     },
     {
       title: "Legal",
       links: [
-        { label: "Terms of Service", href: "/terms" },
-        { label: "Privacy Policy", href: "/privacy" },
-        { label: "Cookie Policy", href: "/cookies" },
+        { label: "Terms of Service", href: "/page/terms" },
+        { label: "Privacy Policy", href: "/page/privacy" },
+        { label: "Cookie Policy", href: "/page/cookies" },
       ],
     },
   ],
@@ -85,13 +85,13 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} NEWS. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/terms" className="text-sm text-gray-400 hover:text-white transition-colors">
+              <Link href="/page/terms" className="text-sm text-gray-400 hover:text-white transition-colors">
                 Terms
               </Link>
-              <Link href="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors">
+              <Link href="/page/privacy" className="text-sm text-gray-400 hover:text-white transition-colors">
                 Privacy
               </Link>
-              <Link href="/cookies" className="text-sm text-gray-400 hover:text-white transition-colors">
+              <Link href="/page/cookies" className="text-sm text-gray-400 hover:text-white transition-colors">
                 Cookies
               </Link>
             </div>
