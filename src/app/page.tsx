@@ -8,6 +8,7 @@ import OpinionSection from "@/components/OpinionSection";
 import { prisma } from "@/lib/prisma";
 import type { DisplayArticle } from "@/lib/types";
 
+export const revalidate = 300;
 
 function toDisplayArticle(a: {
   id: number;

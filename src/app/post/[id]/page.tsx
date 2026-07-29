@@ -4,6 +4,7 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import ShareButtons from "@/components/ShareButtons";
 
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   const articles = await prisma.article.findMany({
