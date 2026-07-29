@@ -7,6 +7,14 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateStaticParams() {
+  const pages = await prisma.page.findMany({
+    where: { status: "PUBLISHED" },
+    select: { slug: true },
+  });
+  return pages.map((page) => ({ slug: page.slug }));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const page = await prisma.page.findUnique({ where: { slug } });
