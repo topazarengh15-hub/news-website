@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatName, navigationItems } from "@/lib/constants";
-import ArticleCard from "@/components/ArticleCard";
+import InfiniteScroll from "@/components/InfiniteScroll";
+import type { DisplayArticle } from "@/lib/types";
 
 export const revalidate = 300;
 
@@ -44,6 +45,7 @@ export default async function SubcategoryPage({
   });
   if (!subCategory) return notFound();
 
+  let initialArticles: DisplayArticle[] = [];
   const dbArticles = await prisma.article.findMany({
     where: { categoryId: subCategory.id, status: "PUBLISHED" },
     include: {
@@ -51,17 +53,10 @@ export default async function SubcategoryPage({
       author: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
-  }) as {
-    id: number;
-    title: string;
-    excerpt: string;
-    imageUrl: string;
-    createdAt: Date;
-    category: { name: string; parent: { name: string } | null };
-    author: { name: string };
-  }[];
+    take: 12,
+  });
 
-  const displayArticles = dbArticles.map((a) => ({
+  initialArticles = dbArticles.map((a) => ({
     id: a.id,
     title: a.title,
     excerpt: a.excerpt,
@@ -91,13 +86,12 @@ export default async function SubcategoryPage({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayArticles.map((article) => (
-          <ArticleCard key={article.id} article={article} />
-        ))}
-      </div>
-
-      {displayArticles.length === 0 && (
+      {initialArticles.length > 0 ? (
+        <InfiniteScroll
+          initialArticles={initialArticles}
+          fetchUrl={`/api/articles?subcategory=${subcategory}`}
+        />
+      ) : (
         <div className="text-center py-12">
           <p className="text-gray-500">No articles found in this subcategory.</p>
         </div>
