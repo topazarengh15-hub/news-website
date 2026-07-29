@@ -121,7 +121,7 @@ export default function Header() {
   }, []);
 
   const handleMenuLeave = useCallback(() => {
-    menuTimeoutRef.current = setTimeout(() => setActiveMenu(null), 150);
+    menuTimeoutRef.current = setTimeout(() => setActiveMenu(null), 300);
   }, []);
 
   return (
@@ -175,10 +175,8 @@ export default function Header() {
 
                     {activeMenu === item.label && (
                       <div
-                        className="absolute left-0 mt-0 w-64 bg-white rounded-b-lg shadow-lg border border-gray-100 py-4 z-50"
+                        className="absolute left-0 top-full w-64 bg-white rounded-b-lg shadow-lg border border-gray-100 py-4 z-50"
                         role="menu"
-                        onMouseEnter={() => handleMenuEnter(item.label)}
-                        onMouseLeave={handleMenuLeave}
                       >
                         <div className="px-4 mb-2">
                           <Link
